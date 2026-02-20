@@ -1,5 +1,5 @@
 // Listen for messages from the React Popup
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     if (request.type === "FETCH_CANVAS_DATA") {
       const { courseId, token } = request.payload;
   
