@@ -14,7 +14,7 @@ export default defineConfig({
       input: {
         index: 'index.html',
         'pdf-viewer': 'pdf-viewer.html',
-        'viewer': 'src/viewer.html',
+        'viewer': 'viewer.html',
       },
     },
   },
