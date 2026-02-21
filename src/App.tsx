@@ -78,9 +78,11 @@ function App() {
                 <p style={{ fontSize: '13px', margin: '0 0 5px 0' }}>{file.name}</p>
                 <button
                   onClick={() => {
-                    const viewerUrl = chrome.runtime.getURL('pdf-viewer.html') +
-                      `?url=${encodeURIComponent(file.url)}&mode=${accessibilityMode}`
-                    chrome.tabs.create({ url: viewerUrl })
+                    chrome.storage.local.set({
+                      selectedLink: file,
+                      selectedMode: accessibilityMode
+                    });
+                    setStatus("Processing PDF…");
                   }}
                   style={{ background: UOF_A_GOLD, border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
                 >
