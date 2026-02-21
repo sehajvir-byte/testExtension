@@ -42,7 +42,7 @@ chrome.storage.local.get(["tempHtmlData"], (result: { [key: string]: any }) => {
     document.head.appendChild(styleEl);
     
     // 5. 清理 storage
-
+    
     chrome.storage.local.remove("tempHtmlData");
   } else {
     document.body.innerHTML = "<h1>Loading failed or no data found.</h1>";
