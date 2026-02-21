@@ -18,10 +18,13 @@
   },
   "web_accessible_resources": [
   {
-    "resources": ["pdf-viewer.html"],
-    "matches": ["https://*.instructure.com/*", "https://uofa.instructure.com/*"]
+    "resources": [
+      "pdf-viewer.html",
+      "*.pdf"
+    ],
+    "matches": ["<all_urls>"]
   }
-  ],
+],
   "content_scripts": [
     {
       "matches": [
