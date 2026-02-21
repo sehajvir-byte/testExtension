@@ -9,4 +9,12 @@ export default defineConfig({
     react(),
     crx({ manifest: manifest as ManifestV3Export }),
   ],
+  build: {
+    rollupOptions: {
+      input: {
+        index: 'index.html',
+        'pdf-viewer': 'pdf-viewer.html',
+      },
+    },
+  },
 })

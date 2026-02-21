@@ -200,7 +200,10 @@ function App() {
                 <button
                   onClick={() => {
                     saveClickedLink(file)
-                    window.open(file.url, '_blank')
+                    const viewerUrl = chrome.runtime.getURL('pdf-viewer.html') +
+                      '?url=' + encodeURIComponent(file.url) +
+                      '&mode=' + encodeURIComponent(accessibilityMode)
+                    chrome.tabs.create({ url: viewerUrl })
                   }}
                   style={{
                     fontSize: '12px',
@@ -213,7 +216,7 @@ function App() {
                     fontWeight: 500
                   }}
                 >
-                  Open
+                  View
                 </button>
               </li>
             ))}

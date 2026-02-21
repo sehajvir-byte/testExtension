@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclusive Canvas - PDF Viewer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .toolbar {
+      padding: 12px 16px;
+      background: #007C41;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .toolbar label { font-size: 13px; }
+    .toolbar select {
+      padding: 6px 10px;
+      font-size: 13px;
+      border-radius: 4px;
+      border: none;
+      background: #fff;
+      color: #333;
+      min-width: 140px;
+    }
+    .toolbar a {
+      color: #FFDB05;
+      text-decoration: underline;
+      font-size: 13px;
+      margin-left: auto;
+    }
+    .toolbar a:hover { opacity: 0.9; }
+    .viewer {
+      flex: 1;
+      overflow: auto;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .viewer iframe {
+      border: none;
+      background: #fff;
+      min-width: 100%;
+      min-height: 600px;
+      width: 100%;
+      height: calc(100vh - 120px);
+    }
+    .viewer.invert iframe { filter: invert(1) hue-rotate(180deg); }
+    .viewer.high-contrast iframe { filter: contrast(1.5) brightness(0.95); }
+    .viewer.color-blind iframe { filter: contrast(1.2) saturate(0.7); }
+    .viewer.dyslexia iframe { filter: contrast(1.1); }
+    .error {
+      padding: 24px;
+      text-align: center;
+      color: #ff6b6b;
+    }
+    .error a { color: #FFDB05; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <label for="mode">Accessibility mode:</label>
+    <select id="mode">
+      <option value="adhd">ADHD</option>
+      <option value="high-contrast">High contrast</option>
+      <option value="color-blind">Color blind</option>
+      <option value="dyslexia">Dyslexia</option>
+    </select>
+    <a id="openRaw" href="#" target="_blank">Open original in new tab</a>
+  </div>
+  <div class="viewer" id="viewer">
+    <iframe id="pdfFrame" title="PDF document"></iframe>
+  </div>
+  <div class="error" id="error" style="display:none;"></div>
+
+  <script>
+    (function() {
+      const params = new URLSearchParams(location.search);
+      const pdfUrl = params.get('url');
+      const mode = params.get('mode') || 'adhd';
+
+      const frame = document.getElementById('pdfFrame');
+      const modeSelect = document.getElementById('mode');
+      const viewer = document.getElementById('viewer');
+      const errorDiv = document.getElementById('error');
+      const openRaw = document.getElementById('openRaw');
+
+      if (!pdfUrl) {
+        errorDiv.textContent = 'No PDF URL provided.';
+        errorDiv.style.display = 'block';
+        frame.style.display = 'none';
+        return;
+      }
+
+      openRaw.href = pdfUrl;
+
+      frame.src = pdfUrl;
+      modeSelect.value = mode;
+      viewer.className = 'viewer ' + mode;
+
+      frame.onerror = function() {
+        errorDiv.innerHTML = 'Could not load PDF. Make sure you are logged into Canvas. <a href="' + pdfUrl + '" target="_blank">Open in new tab</a>';
+        errorDiv.style.display = 'block';
+        frame.style.display = 'none';
+      };
+
+      modeSelect.onchange = function() {
+        viewer.className = 'viewer ' + modeSelect.value;
+      };
+    })();
+  </script>
+</body>
+</html>
