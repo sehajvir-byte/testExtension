@@ -38,7 +38,7 @@
 /* ===== TOKEN INPUT ===== */
 
 .token-input {
-  width: 100%;
+  width: 92%;
   padding: 9px 11px;
   border-radius: 10px;
   border: 1.5px solid #0b5c32;
@@ -153,7 +153,7 @@ input[type="file"] {
 
 .custom-file-label {
   display: inline-block;
-  width: 100%;
+  width: 93%;
   padding: 10px;
   background: #e8ece8;
   border-radius: 10px;
