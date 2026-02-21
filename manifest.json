@@ -16,6 +16,12 @@
     "service_worker": "src/background.ts",
     "type": "module"
   },
+  "web_accessible_resources": [
+  {
+    "resources": ["pdf-viewer.html"],
+    "matches": ["https://*.instructure.com/*", "https://uofa.instructure.com/*"]
+  }
+  ],
   "content_scripts": [
     {
       "matches": [
