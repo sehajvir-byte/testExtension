@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-// 从 storage 中读取 HTML 字符串
-chrome.storage.local.get(["tempHtmlData"], (result) => {
-  const htmlContent = result.tempHtmlData;
-  
-  if (typeof htmlContent === 'string' && htmlContent.length > 0) {
-    // This replaces the entire HTML content of the page with Gemini's output
-    document.documentElement.innerHTML = htmlContent;
-    
-    // Optional: Update title
-    document.title = "Inclusive Canvas - Accessible View";
-
-    // Clean up storage
-=======
 import DOMPurify from 'dompurify';
 
 // 1. 定义你的自定义 CSS
@@ -56,7 +42,7 @@ chrome.storage.local.get(["tempHtmlData"], (result: { [key: string]: any }) => {
     document.head.appendChild(styleEl);
     
     // 5. 清理 storage
->>>>>>> 6d8b22dd00879bd2d6afdde27a503da934d20b47
+    
     chrome.storage.local.remove("tempHtmlData");
   } else {
     document.body.innerHTML = "<h1>Loading failed or no data found.</h1>";
