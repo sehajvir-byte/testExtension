@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { processSelectedFile } from "./background";
 
 const UOF_A_GREEN = '#007C41'
 const UOF_A_GOLD = '#FFDB05'
@@ -149,9 +150,10 @@ useEffect(() => {
                 <p style={{ fontSize: '13px', margin: '0 0 8px 0', fontWeight: 500, color: '#333' }}>{file.name}</p>
                 <button
                   onClick={() => {
-                    const viewerUrl = chrome.runtime.getURL('pdf-viewer.html') +
-                      `?url=${encodeURIComponent(file.url)}&mode=${accessibilityMode}`
-                    chrome.tabs.create({ url: viewerUrl })
+                    // const viewerUrl = chrome.runtime.getURL('pdf-viewer.html') +
+                    //   `?url=${encodeURIComponent(file.url)}&mode=${accessibilityMode}`
+                    // chrome.tabs.create({ url: viewerUrl })
+                    processSelectedFile(file,accessibilityMode)
                   }}
                   style={{ 
                     background: UOF_A_GOLD, 

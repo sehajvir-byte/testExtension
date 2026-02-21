@@ -38,7 +38,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 // ===============================
 //  IMPORT PLACEHOLDER RENDERER
 // ===============================
-import { renderPdfPlaceholder } from "../render-pdf";
+import { renderPdf } from "../render-pdf";
 
 // ===============================
 //  PDF PIPELINE
@@ -68,7 +68,7 @@ async function fetchPdfBlob(downloadUrl: string): Promise<Blob> {
 }
 
 // Main processing pipeline
-async function processSelectedFile(
+export async function processSelectedFile(
   file: { name: string; url: string },
   mode: string
 ) {
@@ -81,21 +81,35 @@ async function processSelectedFile(
     const originalPdf = await fetchPdfBlob(downloadUrl);
     console.log("[InclusiveCanvas] Original PDF blob:", originalPdf);
 
-    // Placeholder renderer (returns original PDF unchanged)
-    const renderedPdf = await renderPdfPlaceholder(originalPdf);
-    console.log("[InclusiveCanvas] Rendered PDF blob:", renderedPdf);
+    // // Placeholder renderer (returns original PDF unchanged)
+    // const renderedPdf = await renderPdfPlaceholder(originalPdf);
+    // console.log("[InclusiveCanvas] Rendered PDF blob:", renderedPdf);
 
-    const blobUrl = URL.createObjectURL(renderedPdf);
-    console.log("[InclusiveCanvas] Blob URL:", blobUrl);
+    // const blobUrl = URL.createObjectURL(renderedPdf);
+    // console.log("[InclusiveCanvas] Blob URL:", blobUrl);
 
-    // Open viewer with blob URL + mode
-    const viewerUrl =
-      chrome.runtime.getURL("pdf-viewer.html") +
-      `?url=${encodeURIComponent(blobUrl)}&mode=${encodeURIComponent(mode)}`;
+    // // Open viewer with blob URL + mode
+    // const viewerUrl =
+    //   chrome.runtime.getURL("pdf-viewer.html") +
+    //   `?url=${encodeURIComponent(blobUrl)}&mode=${encodeURIComponent(mode)}`;
 
-    console.log("[InclusiveCanvas] Opening viewer:", viewerUrl);
+    // console.log("[InclusiveCanvas] Opening viewer:", viewerUrl);
 
-    chrome.tabs.create({ url: viewerUrl });
+    // chrome.tabs.create({ url: viewerUrl });
+
+    const htmlString = await renderPdf(originalPdf);
+    console.log("[InclusiveCanvas] Rendered PDF blob:", htmlString);
+
+    // 1. 将 HTML 字符串存入 chrome.storage.local
+    chrome.storage.local.set({ tempHtmlData: htmlString }, () => {
+      
+      // 2. 获取扩展内部页面的真实 URL
+      const viewerUrl: string = chrome.runtime.getURL("viewer.html")+
+      `?url=doesItMatter?&mode=${encodeURIComponent(mode)}`;
+      
+      // 3. 打开该页面
+      chrome.tabs.create({ url: viewerUrl });
+    });
   } catch (err) {
     console.error("[InclusiveCanvas] Pipeline error:", err);
   }
