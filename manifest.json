@@ -37,10 +37,9 @@
       "js": ["src/content.ts"]
     }
   ],
-  "icons": [
-	{ 
-		"16": "canvas-accessify-icon.png", 
-		"48": "canvas-accessify-icon.png", 
-		"128": "canvas-accessify-icon.png" }
-]
+  "icons": {
+  	"16": "icons/canvas-accessify-icon.png",
+  	"48": "icons/canvas-accessify-icon.png",
+  	"128": "icons/canvas-accessify-icon.png"
+}
 }
