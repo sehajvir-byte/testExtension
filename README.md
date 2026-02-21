@@ -1,73 +1,39 @@
-# React + TypeScript + Vite
+# Inclusive Canvas: Adaptive Learning for Every Mind
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Inclusive Canvas is a Chrome Extension designed to dismantle the digital barriers in higher education. Built for the **DivE Social Good Prize**, it transforms the standard University of Alberta Canvas interface into a personalized, accessible dashboard tailored for neurodivergent and disabled students.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## The Problem
+Standard Learning Management Systems (LMS) are often overwhelming. 
 
-## React Compiler
+- **For students with ADHD**: The cluttered sidebars are a constant source of distraction.
+- **For students with Dyslexia**: The default fonts are difficult to parse.
+- **For the Visually Impaired**: High-contrast and layout stability are essential for success.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Key Features
+* **ADHD Focus Mode**: Instantly strips away distracting sidebars and centers course content to reduce cognitive load.
+* **Dyslexia-Friendly Typography**: One-click font swapping to *OpenDyslexic*, designed specifically to increase readability and reduce letter-flipping.
+* **High-Contrast Profiles**: Specialized CSS filters to assist students with color-blindness or low vision.
+* **Smart Document Scanner**: Automatically extracts scattered PDF and file links from course modules into a clean, easy-to-access list.
+* **Secure Integration**: Uses the official Canvas API and `chrome.storage` to handle student data locally and securely.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Technical Stack
+- **Frontend**: React + TypeScript for a fast, responsive UI.
+- **Core**: Chrome Extension API (Manifest V3).
+- **Communication**: Asynchronous message passing between Popup, Background Service Workers, and Content Scripts.
+- **Styling**: Dynamic CSS Injection for real-time page transformation.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Installation & Setup
+1.  **Clone** this repository.
+2.  Run `npm install` and `npm run build`.
+3.  Open Chrome and navigate to `chrome://extensions/`.
+4.  Enable **Developer Mode** and click **Load Unpacked**.
+5.  Select the `dist` folder.
+6.  Open any Canvas course at **uofa.instructure.com** and click the extension icon to begin!
