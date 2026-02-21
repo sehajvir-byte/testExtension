@@ -1,6 +1,9 @@
 import DOMPurify from 'dompurify';
+// Import Katex
+import renderMathInElement from 'katex/dist/contrib/auto-render.js';
 
-// 1. 定义你的自定义 CSS
+const fontUrl = chrome.runtime.getURL("fonts/OpenDyslexic-Regular.otf"); 
+
 const customCSS: string = `
   code {
 			font-size: 1em;
@@ -13,38 +16,60 @@ const customCSS: string = `
     font-size: 20px;
     line-height: 2;
   }
+  @font-face {
+    font-family: 'OpenDyslexic';
+    src: url('${fontUrl}');
+  }
+
+  * {
+    font-family: 'OpenDyslexic', sans-serif !important;
+  }
 `;
 
 chrome.storage.local.get(["tempHtmlData"], (result: { [key: string]: any }) => {
   const htmlContent: string = result.tempHtmlData;
   
   if (htmlContent) {
-    // 2. 使用 DOMPurify 清洗 HTML 并生成 TrustedHTML
+    // 1. 清洗 HTML
     const cleanTrustedHtml = DOMPurify.sanitize(htmlContent, {
       RETURN_TRUSTED_TYPE: true,
-      WHOLE_DOCUMENT: true // 允许保留 <html>, <head>, <body> 结构
+      WHOLE_DOCUMENT: true
     });
 
-    // 3. 安全地替换整个页面的内容（此时原有的 head 和 body 会被覆盖）
+    // 2. 替换 DOM（这会清空原有的 head 和 body）
     document.documentElement.innerHTML = cleanTrustedHtml as unknown as string;
     
-    // 4. 动态创建 style 标签并注入自定义 CSS
-    const styleEl = document.createElement('style');
-    styleEl.textContent = customCSS;
-    
-    // 确保 document.head 存在（即使传入的 HTML 没有 head，浏览器通常也会自动补全）
     if (!document.head) {
       const headEl = document.createElement('head');
       document.documentElement.insertBefore(headEl, document.body);
     }
-    
-    // 将自定义样式追加到 head 的末尾，确保其优先级最高
+
+    // 3. 注入自定义 CSS
+    const styleEl = document.createElement('style');
+    styleEl.textContent = customCSS;
     document.head.appendChild(styleEl);
+
+    // 4. 注入 KaTeX 的 CSS (允许使用 CDN，这样不需要在扩展里打包庞大的字体文件)
+    const katexLink = document.createElement('link');
+    katexLink.rel = 'stylesheet';
+    katexLink.href = 'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css';
+    document.head.appendChild(katexLink);
+
+    // 5. 执行 KaTeX 自动渲染 (使用本地打包的 JS，符合 Chrome CSP 规范)
+    // 必须确保在 DOM 替换完成后执行
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false},
+        {left: '\\(', right: '\\)', display: false},
+        {left: '\\[', right: '\\]', display: true}
+      ],
+      throwOnError: false // 防止某个公式语法错误导致整个页面渲染中断
+    });
     
-    // 5. 清理 storage
-    
+    // 6. 清理 Storage
     chrome.storage.local.remove("tempHtmlData");
   } else {
-    document.body.innerHTML = "<h1>Loading failed or no data found.</h1>";
+    document.body.innerHTML = "<h1>加载失败或没有数据</h1>";
   }
 });

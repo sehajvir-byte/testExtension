@@ -80,35 +80,15 @@ export async function processSelectedFile(
     const originalPdf = await fetchPdfBlob(downloadUrl);
     console.log("[Canvas Accessify] Original PDF blob:", originalPdf);
 
-    // // Placeholder renderer (returns original PDF unchanged)
-    // const renderedPdf = await renderPdfPlaceholder(originalPdf);
-    // console.log("[Canvas Accessify] Rendered PDF blob:", renderedPdf);
-
-    // const blobUrl = URL.createObjectURL(renderedPdf);
-    // console.log("[Canvas Accessify] Blob URL:", blobUrl);
-
-    // // Open viewer with blob URL + mode
-    // const viewerUrl =
-    //   chrome.runtime.getURL("pdf-viewer.html") +
-    //   `?url=${encodeURIComponent(blobUrl)}&mode=${encodeURIComponent(mode)}`;
-
-    // console.log("[Canvas Accessify] Opening viewer:", viewerUrl);
-
-    // chrome.tabs.create({ url: viewerUrl });
-
     const htmlString = await renderPdf(originalPdf);
     console.log("[Canvas Accessify] Rendered PDF blob:", htmlString);
 
-    // 1. 将 HTML 字符串存入 chrome.storage.local
+    // 1. Store HTML to chrome.storage.local
     chrome.storage.local.set({ tempHtmlData: htmlString }, () => {
-      
-      // 2. 获取扩展内部页面的真实 URL
+      // 2. Get URL
       const viewerUrl = chrome.runtime.getURL("viewer.html") +
                         `?mode=${encodeURIComponent(mode)}`;
-      
-      //console.log("[Canvas Accessify] Opening viewer:", viewerUrl);
-      
-      // 3. 打开该页面
+      // 3. Open Page
       chrome.tabs.create({ url: viewerUrl });
     });
   } catch (err) {
