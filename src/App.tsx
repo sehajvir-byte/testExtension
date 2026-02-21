@@ -67,7 +67,7 @@ useEffect(() => {
 
   return (
     <div style={{ padding: '20px', width: '320px', fontFamily: 'sans-serif', backgroundColor: '#fff' }}>
-      <h1 style={{ fontSize: '18px', marginBottom: '12px', color: UOF_A_GREEN }}>Inclusive Canvas</h1>
+      <h1 style={{ fontSize: '18px', marginBottom: '12px', color: UOF_A_GREEN }}>Canvas Accessify</h1>
 
       {/* Conditional Rendering: Hides the input box if a token exists */}
       {showSettings ? (

@@ -1,6 +1,6 @@
-# Inclusive Canvas: Adaptive Learning for Every Mind
+# Canvas Accessify: Adaptive Learning for Every Mind
 
-Inclusive Canvas is a Chrome Extension designed to dismantle the digital barriers in higher education. Built for the **DivE Social Good Prize**, it transforms the standard University of Alberta Canvas interface into a personalized, accessible dashboard tailored for neurodivergent and disabled students.
+Canvas Accessify is a Chrome Extension designed to dismantle the digital barriers in higher education. Built for the **DivE Social Good Prize**, it transforms the standard University of Alberta Canvas interface into a personalized, accessible dashboard tailored for neurodivergent and disabled students.
 
 ---
 
