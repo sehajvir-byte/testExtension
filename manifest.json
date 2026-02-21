@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Inclusive Canvas",
+  "name": "Canvas Accessify",
   "version": "1.0",
   "description": "Accessibility tool for Canvas - transforms dense pages into clean, organized dashboards for students with ADHD and learning disabilities",
   "permissions": ["activeTab", "scripting", "storage"],
