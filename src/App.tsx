@@ -10,15 +10,19 @@ function App() {
   const [status, setStatus] = useState('Ready')
   const [files, setFiles] = useState<{ name: string; url: string }[]>([])
   const [accessibilityMode, setAccessibilityMode] = useState<AccessibilityMode>('adhd')
+  const [showSettings, setShowSettings] = useState(false)
 
   useEffect(() => {
-    // Define the type inline so TypeScript stops complaining
+    // result type is defined here to fix the TypeScript error
     chrome.storage.local.get(['canvasToken'], (result: { [key: string]: any }) => {
       if (result.canvasToken) {
-        setToken(result.canvasToken);
+        setToken(result.canvasToken)
+        setShowSettings(false)
+      } else {
+        setShowSettings(true)
       }
-    });
-  }, []);
+    })
+  }, [])
 
   const saveToken = (value: string) => {
     setToken(value)
@@ -33,38 +37,89 @@ function App() {
       
       chrome.tabs.sendMessage(tab.id, { type: 'SCAN_FILES' }, (response) => {
         if (chrome.runtime.lastError) {
-          setStatus('Error: Refresh the page')
+          setStatus('Error: Refresh the Canvas page')
         } else if (response?.files) {
           setFiles(response.files)
           setStatus(`Found ${response.files.length} files!`)
+        } else {
+          setStatus('No files found on this page.')
         }
       })
     })
   }
 
   return (
-    <div style={{ padding: '20px', width: '320px', fontFamily: 'sans-serif' }}>
+    <div style={{ padding: '20px', width: '320px', fontFamily: 'sans-serif', backgroundColor: '#fff' }}>
       <h1 style={{ fontSize: '18px', marginBottom: '12px', color: UOF_A_GREEN }}>Inclusive Canvas</h1>
 
-      <input
-        type="password"
-        placeholder="Canvas API Token"
-        value={token}
-        onChange={(e) => saveToken(e.target.value)}
-        style={{ width: '100%', padding: '10px', marginBottom: '10px', border: `2px solid ${UOF_A_GREEN}`, borderRadius: '4px' }}
-      />
+      {/* Conditional Rendering: Hides the input box if a token exists */}
+      {showSettings ? (
+        <div style={{ marginBottom: '15px' }}>
+          <input
+            type="password"
+            placeholder="Canvas API Token"
+            value={token}
+            onChange={(e) => saveToken(e.target.value)}
+            style={{ 
+              width: '100%', 
+              padding: '10px', 
+              border: `2px solid ${UOF_A_GREEN}`, 
+              borderRadius: '4px',
+              boxSizing: 'border-box'
+            }}
+          />
+          {token && (
+            <button 
+              onClick={() => setShowSettings(false)}
+              style={{ fontSize: '11px', marginTop: '5px', background: 'none', border: 'none', cursor: 'pointer', color: '#666', textDecoration: 'underline' }}
+            >
+              Save and Hide
+            </button>
+          )}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+          <button 
+            onClick={() => setShowSettings(true)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', color: '#666' }}
+          >
+            ⚙️ Edit Token
+          </button>
+        </div>
+      )}
 
-      <button onClick={scanForFiles} style={{ width: '100%', padding: '12px', background: UOF_A_GREEN, color: 'white', border: 'none', borderRadius: '4px', fontWeight: 600, cursor: 'pointer' }}>
+      <button 
+        onClick={scanForFiles} 
+        style={{ 
+          width: '100%', 
+          padding: '12px', 
+          background: UOF_A_GREEN, 
+          color: 'white', 
+          border: 'none', 
+          borderRadius: '4px', 
+          fontWeight: 600, 
+          cursor: 'pointer',
+          marginBottom: '10px'
+        }}
+      >
         🔍 Scan for Documents
       </button>
 
       {files.length > 0 && (
-        <div style={{ marginTop: '15px' }}>
-          <label style={{ fontSize: '12px', color: '#666' }}>PDF View Preference:</label>
+        <div style={{ marginTop: '15px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
+          <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '5px' }}>
+            PDF View Preference:
+          </label>
           <select 
             value={accessibilityMode} 
             onChange={(e) => setAccessibilityMode(e.target.value as AccessibilityMode)}
-            style={{ width: '100%', padding: '8px', marginBottom: '10px', borderRadius: '4px' }}
+            style={{ 
+              width: '100%', 
+              padding: '8px', 
+              marginBottom: '15px', 
+              borderRadius: '4px',
+              border: `1px solid #ccc`
+            }}
           >
             <option value="adhd">ADHD (Warm/Low Glare)</option>
             <option value="high-contrast">High Contrast (Dark Mode)</option>
@@ -72,19 +127,25 @@ function App() {
             <option value="dyslexia">Enhanced Spacing</option>
           </select>
 
-          <ul style={{ listStyle: 'none', padding: 0 }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {files.map((file, index) => (
-              <li key={index} style={{ borderBottom: '1px solid #eee', padding: '8px 0' }}>
-                <p style={{ fontSize: '13px', margin: '0 0 5px 0' }}>{file.name}</p>
+              <li key={index} style={{ borderBottom: '1px solid #eee', padding: '10px 0' }}>
+                <p style={{ fontSize: '13px', margin: '0 0 8px 0', fontWeight: 500, color: '#333' }}>{file.name}</p>
                 <button
                   onClick={() => {
-                    chrome.storage.local.set({
-                      selectedLink: file,
-                      selectedMode: accessibilityMode
-                    });
-                    setStatus("Processing PDF…");
+                    const viewerUrl = chrome.runtime.getURL('pdf-viewer.html') +
+                      `?url=${encodeURIComponent(file.url)}&mode=${accessibilityMode}`
+                    chrome.tabs.create({ url: viewerUrl })
                   }}
-                  style={{ background: UOF_A_GOLD, border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
+                  style={{ 
+                    background: UOF_A_GOLD, 
+                    border: 'none', 
+                    padding: '6px 12px', 
+                    borderRadius: '4px', 
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}
                 >
                   View Accessible PDF
                 </button>
@@ -93,7 +154,10 @@ function App() {
           </ul>
         </div>
       )}
-      <p style={{ fontSize: '11px', color: '#999', marginTop: '10px' }}>Status: {status}</p>
+      
+      <p style={{ fontSize: '11px', color: '#999', marginTop: '15px', textAlign: 'center' }}>
+        Status: {status}
+      </p>
     </div>
   )
 }
