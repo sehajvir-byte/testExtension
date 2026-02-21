@@ -7,6 +7,7 @@ type AccessibilityMode = 'high-contrast' | 'color-blind' | 'dyslexia' | 'adhd'
 
 function App() {
   const [token, setToken] = useState('')
+  const [googleToken, setGoogleToken] = useState('')
   const [status, setStatus] = useState('Ready')
   const [files, setFiles] = useState<{ name: string; url: string }[]>([])
   const [accessibilityMode, setAccessibilityMode] = useState<AccessibilityMode>('adhd')
@@ -25,24 +26,31 @@ function App() {
         if (f.url.startsWith('blob:')) URL.revokeObjectURL(f.url)
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [files])
 
-  useEffect(() => {
-    chrome.storage.local.get(['canvasToken'], (result: { [key: string]: any }) => {
-      if (result.canvasToken) {
+  // Load tokens on startup
+ useEffect(() => {
+  chrome.storage.local.get(
+    ['canvasToken', 'googleToken'],
+    (result: { canvasToken?: string; googleToken?: string }) => {
+
+      if (typeof result.canvasToken === 'string') {
         setToken(result.canvasToken)
-        setShowSettings(false)
-      } else {
-        setShowSettings(true)
       }
-    })
-  }, [])
 
-  const saveToken = (value: string) => {
-    setToken(value)
-    chrome.storage.local.set({ canvasToken: value })
-  }
+      if (typeof result.googleToken === 'string') {
+        setGoogleToken(result.googleToken)
+      }
+
+      if (!result.canvasToken || !result.googleToken) {
+        setShowSettings(true)
+      } else {
+        setShowSettings(false)
+      }
+    }
+  )
+}, [])
+
 
   const scanForFiles = () => {
     setStatus('Scanning...')
@@ -76,15 +84,36 @@ function App() {
       {/* ===== TOKEN SECTION ===== */}
       {showSettings ? (
         <div className="section">
+
+          {/* Canvas API Token */}
+          <label className="token-label">Canvas API Token</label>
           <input
             type="password"
             placeholder="Canvas API Token"
             value={token}
-            onChange={(e) => saveToken(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              setToken(value)
+              chrome.storage.local.set({ canvasToken: value })
+            }}
             className="token-input"
           />
 
-          {token && (
+          {/* Google API Token */}
+          <label className="token-label">Google API Token</label>
+          <input
+            type="password"
+            placeholder="Google API Token"
+            value={googleToken}
+            onChange={(e) => {
+              const value = e.target.value
+              setGoogleToken(value)
+              chrome.storage.local.set({ googleToken: value })
+            }}
+            className="token-input"
+          />
+
+          {(token || googleToken) && (
             <button
               onClick={() => setShowSettings(false)}
               className="link-button"
@@ -99,10 +128,12 @@ function App() {
             onClick={() => setShowSettings(true)}
             className="link-button"
           >
-            Edit Token
+            Edit Tokens
           </button>
         </div>
       )}
+
+
 
       {/* ===== SCAN BUTTON ===== */}
       <button

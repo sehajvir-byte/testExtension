@@ -48,6 +48,15 @@
   background: #fafafa;
 }
 
+.token-label {
+  font-size: 12px;
+  color: #444;
+  margin-bottom: 4px;
+  display: block;
+  margin-top: 10px;
+}
+
+
 .token-input:focus {
   box-shadow: 0 0 0 3px rgba(11, 92, 50, 0.15);
 }
