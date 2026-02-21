@@ -83,41 +83,6 @@
   </div>
   <div class="error" id="error" style="display:none;"></div>
 
-  <script>
-    (function() {
-      const params = new URLSearchParams(location.search);
-      const pdfUrl = params.get('url');
-      const mode = params.get('mode') || 'adhd';
-
-      const frame = document.getElementById('pdfFrame');
-      const modeSelect = document.getElementById('mode');
-      const viewer = document.getElementById('viewer');
-      const errorDiv = document.getElementById('error');
-      const openRaw = document.getElementById('openRaw');
-
-      if (!pdfUrl) {
-        errorDiv.textContent = 'No PDF URL provided.';
-        errorDiv.style.display = 'block';
-        frame.style.display = 'none';
-        return;
-      }
-
-      openRaw.href = pdfUrl;
-
-      frame.src = pdfUrl;
-      modeSelect.value = mode;
-      viewer.className = 'viewer ' + mode;
-
-      frame.onerror = function() {
-        errorDiv.innerHTML = 'Could not load PDF. Make sure you are logged into Canvas. <a href="' + pdfUrl + '" target="_blank">Open in new tab</a>';
-        errorDiv.style.display = 'block';
-        frame.style.display = 'none';
-      };
-
-      modeSelect.onchange = function() {
-        viewer.className = 'viewer ' + modeSelect.value;
-      };
-    })();
-  </script>
+  <script type="module" src="/src/pdf-viewer.ts"></script>
 </body>
 </html>
