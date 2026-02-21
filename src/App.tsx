@@ -12,6 +12,22 @@ function App() {
   const [accessibilityMode, setAccessibilityMode] = useState<AccessibilityMode>('adhd')
   const [showSettings, setShowSettings] = useState(false)
 
+ const addLocalFile = (file: File) => {
+  const url = URL.createObjectURL(file)
+  const name = file.name || 'Local PDF'
+  setFiles(prev => [{ name, url }, ...prev])
+}
+
+// cleanup blob URLs on unmount or when files change
+useEffect(() => {
+  return () => {
+    files.forEach(f => {
+      if (f.url.startsWith('blob:')) URL.revokeObjectURL(f.url)
+    })
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [])
+
   useEffect(() => {
     // result type is defined here to fix the TypeScript error
     chrome.storage.local.get(['canvasToken'], (result: { [key: string]: any }) => {
@@ -154,7 +170,33 @@ function App() {
           </ul>
         </div>
       )}
-      
+     
+      {/* Local PDF input for testing */}
+        <div style={{ marginTop: '12px', borderTop: '1px solid #eee', paddingTop: '12px' }}>
+          <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '6px' }}>
+            Load a local PDF for testing:
+          </label>
+
+          <input
+            id="local-pdf-input"
+            type="file"
+            accept="application/pdf"
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              addLocalFile(file)
+              // clear the input so the same file can be re-selected if needed
+              e.currentTarget.value = ''
+              setStatus(`Loaded local file: ${file.name}`)
+            }}
+            style={{ width: '100%', marginBottom: '8px' }}
+          />
+
+          <p style={{ fontSize: '11px', color: '#999', marginTop: '6px' }}>
+            Local PDFs are opened via a blob URL and will appear in the file list above.
+          </p>
+        </div>
+
       <p style={{ fontSize: '11px', color: '#999', marginTop: '15px', textAlign: 'center' }}>
         Status: {status}
       </p>
