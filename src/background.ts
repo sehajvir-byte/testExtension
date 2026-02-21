@@ -57,7 +57,6 @@ async function fetchPdfBlob(downloadUrl: string): Promise<Blob> {
 
   const res = await fetch(downloadUrl, {
     method: "GET",
-    credentials: "include" // required for Canvas auth
   });
 
   if (!res.ok) {
@@ -104,8 +103,10 @@ export async function processSelectedFile(
     chrome.storage.local.set({ tempHtmlData: htmlString }, () => {
       
       // 2. 获取扩展内部页面的真实 URL
-      const viewerUrl: string = chrome.runtime.getURL("viewer.html")+
-      `?url=doesItMatter?&mode=${encodeURIComponent(mode)}`;
+      const viewerUrl = chrome.runtime.getURL("src/viewer.html") +
+                        `?mode=${encodeURIComponent(mode)}`;
+      
+      //console.log("[InclusiveCanvas] Opening viewer:", viewerUrl);
       
       // 3. 打开该页面
       chrome.tabs.create({ url: viewerUrl });

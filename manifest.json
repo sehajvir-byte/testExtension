@@ -7,7 +7,8 @@
   "host_permissions": [
     "https://uofa.instructure.com/*",
     "https://*.instructure.com/*",
-    "https://canvas.ualberta.ca/*"
+    "https://canvas.ualberta.ca/*",
+    "https://*.canvas-user-content.com/*"
   ],
   "action": {
     "default_popup": "index.html"
@@ -20,6 +21,7 @@
   {
     "resources": [
       "pdf-viewer.html",
+      "src/viewer.html",
       "*.pdf"
     ],
     "matches": ["<all_urls>"]

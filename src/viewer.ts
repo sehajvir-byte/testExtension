@@ -1,16 +1,17 @@
 // 从 storage 中读取 HTML 字符串
-chrome.storage.local.get(["tempHtmlData"], (result: { [key: string]: any }) => {
-  const htmlContent: string = result.tempHtmlData;
+chrome.storage.local.get(["tempHtmlData"], (result) => {
+  const htmlContent = result.tempHtmlData;
   
-  if (htmlContent) {
-    // 替换整个文档的内容
-    document.open();
-    document.write(htmlContent);
-    document.close();
+  if (typeof htmlContent === 'string' && htmlContent.length > 0) {
+    // This replaces the entire HTML content of the page with Gemini's output
+    document.documentElement.innerHTML = htmlContent;
     
-    // 可选：读取完后清除 storage，释放空间
+    // Optional: Update title
+    document.title = "Inclusive Canvas - Accessible View";
+
+    // Clean up storage
     chrome.storage.local.remove("tempHtmlData");
   } else {
-    document.body.innerHTML = "<h1>加载失败或没有数据</h1>";
+    document.body.innerHTML = "<h1>Loading failed or no data found.</h1>";
   }
 });
