@@ -21,7 +21,7 @@
   {
     "resources": [
       "pdf-viewer.html",
-      "src/viewer.html",
+      "viewer.html",
       "*.pdf"
     ],
     "matches": ["<all_urls>"]

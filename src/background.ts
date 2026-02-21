@@ -103,7 +103,7 @@ export async function processSelectedFile(
     chrome.storage.local.set({ tempHtmlData: htmlString }, () => {
       
       // 2. 获取扩展内部页面的真实 URL
-      const viewerUrl = chrome.runtime.getURL("src/viewer.html") +
+      const viewerUrl = chrome.runtime.getURL("viewer.html") +
                         `?mode=${encodeURIComponent(mode)}`;
       
       //console.log("[InclusiveCanvas] Opening viewer:", viewerUrl);
