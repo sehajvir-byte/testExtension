@@ -1,20 +1,29 @@
 {
-    "manifest_version": 3,
-    "name": "Inclusive Canvas",
-    "version": "1.0",
-    "permissions": ["storage", "activeTab", "scripting"],
-    "host_permissions": ["https://uofa.instructure.com/*"],
-    "action": {
-      "default_popup": "index.html"
-    },
-    "background": {
-      "service_worker": "src/background.ts",
-      "type": "module"
-    },
-    "content_scripts": [
-      {
-        "matches": ["https://uofa.instructure.com/*"],
-        "js": ["src/content.ts"]
-      }
-    ]
-  }
+  "manifest_version": 3,
+  "name": "Inclusive Canvas",
+  "version": "1.0",
+  "description": "Accessibility tool for Canvas - transforms dense pages into clean, organized dashboards for students with ADHD and learning disabilities",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": [
+    "https://uofa.instructure.com/*",
+    "https://*.instructure.com/*",
+    "https://canvas.ualberta.ca/*"
+  ],
+  "action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "service_worker": "src/background.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://uofa.instructure.com/*",
+        "https://*.instructure.com/*",
+        "https://canvas.ualberta.ca/*"
+      ],
+      "js": ["src/content.ts"]
+    }
+  ]
+}
