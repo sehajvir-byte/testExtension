@@ -147,8 +147,8 @@ function App() {
 
       {/* ===== LOCAL FILE UPLOAD ===== */}
       <div className="section">
-        <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '6px' }}>
-          Load a local PDF for testing:
+        <label htmlFor="local-pdf-input" className="custom-file-label">
+          Choose PDF File
         </label>
 
         <input
@@ -162,7 +162,6 @@ function App() {
             e.currentTarget.value = ''
             setStatus(`Loaded local file: ${file.name}`)
           }}
-          style={{ width: '100%' }}
         />
 
         <p style={{ fontSize: '11px', color: '#999', marginTop: '6px' }}>

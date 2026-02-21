@@ -1,68 +1,71 @@
-/* app.css */
-
 .app-container {
-  width: 360px;
-  background: white;
-  padding: 26px;
-  border-radius: 18px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+  width: 320px; /* narrower and more elegant */
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e6e6e6;
 }
 
 /* ===== HEADER ===== */
 
 .header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .app-logo {
-  width: 58px;
-  margin-bottom: 14px;
+  width: 52px;
+  margin-bottom: 10px;
 }
 
 .app-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  color: #007C41;
+  color: #0b5c32;
   margin: 0;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
 }
 
 .gold-line {
-  width: 42px;
+  width: 36px;
   height: 3px;
-  background: #FFDB05;
-  margin: 10px auto 0 auto;
+  background: #f4c400;
+  margin: 8px auto 0 auto;
   border-radius: 2px;
 }
 
-/* ===== TOKEN SECTION ===== */
+/* ===== TOKEN INPUT ===== */
 
 .token-input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 9px 11px;
   border-radius: 10px;
-  border: 1.5px solid #007C41;
+  border: 1.5px solid #0b5c32;
   outline: none;
   font-size: 13px;
   margin-bottom: 6px;
-  box-sizing: border-box;
+  background: #fafafa;
 }
 
 .token-input:focus {
-  box-shadow: 0 0 0 3px rgba(0, 124, 65, 0.15);
+  box-shadow: 0 0 0 3px rgba(11, 92, 50, 0.15);
 }
+
+/* ===== LINK BUTTON ===== */
 
 .link-button {
   background: none;
   border: none;
-  color: #007C41;
+  color: #0b5c32;
   font-size: 12px;
   cursor: pointer;
   padding: 0;
+  opacity: 0.85;
 }
 
 .link-button:hover {
+  opacity: 1;
   text-decoration: underline;
 }
 
@@ -70,68 +73,68 @@
 
 .primary-button {
   width: 100%;
-  padding: 14px;
-  background: #007C41;
+  padding: 12px;
+  background: #0b5c32;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .primary-button:hover {
-  box-shadow: 0 8px 18px rgba(0, 124, 65, 0.3);
+  box-shadow: 0 6px 14px rgba(11, 92, 50, 0.25);
   transform: translateY(-1px);
 }
 
-/* ===== SECTIONS ===== */
+/* ===== SECTION ===== */
 
 .section {
-  border-top: 1px solid #f0f0f0;
-  padding-top: 18px;
-  margin-top: 18px;
+  border-top: 1px solid #ececec;
+  padding-top: 16px;
+  margin-top: 16px;
 }
 
 /* ===== DROPDOWN ===== */
 
 .select-dropdown {
   width: 100%;
-  padding: 10px;
+  padding: 9px;
   border-radius: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #dcdcdc;
   font-size: 13px;
-  margin-bottom: 14px;
-  background: #fafafa;
+  margin-bottom: 12px;
+  background: #f9f9f9;
 }
 
 .select-dropdown:focus {
-  border-color: #007C41;
+  border-color: #0b5c32;
   outline: none;
 }
 
 /* ===== FILE ITEM ===== */
 
 .file-item {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .file-name {
   font-size: 13px;
   font-weight: 500;
   color: #333;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 /* ===== GOLD BUTTON ===== */
 
 .gold-button {
-  background: #FFDB05;
+  background: #f4c400;
   border: none;
-  padding: 8px 14px;
-  border-radius: 10px;
+  padding: 7px 12px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -139,14 +142,39 @@
 }
 
 .gold-button:hover {
-  box-shadow: 0 6px 14px rgba(255, 219, 5, 0.4);
+  box-shadow: 0 4px 10px rgba(244, 196, 0, 0.35);
+}
+
+/* ===== CUSTOM FILE INPUT ===== */
+
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-label {
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  background: #e8ece8;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border: 1px solid #dcdcdc;
+}
+
+.custom-file-label:hover {
+  background: #dfe4df;
 }
 
 /* ===== STATUS ===== */
 
 .status-text {
   font-size: 11px;
-  color: #888;
+  color: #777;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 18px;
 }
