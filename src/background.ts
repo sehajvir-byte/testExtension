@@ -112,3 +112,36 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
     processSelectedFile(file, mode);
   }
 });
+
+self.addEventListener('fetch', (event: any) => {
+  const url = new URL(event.request.url);
+  // Intercept requests to our "buffer zone" path
+  if (url.pathname.startsWith('/temp-images/')) {
+    event.respondWith(handleImageRequest(url.pathname));
+  }
+});
+
+async function handleImageRequest(pathname: string): Promise<Response> {
+  const filename = pathname.replace('/temp-images/', '');
+  
+  // 1. Tell TypeScript that the storage result is a record of strings
+  const result = await chrome.storage.local.get(filename) as Record<string, string>;
+  
+  // 2. Extract the value (it will be string | undefined)
+  const base64Data: string | undefined = result[filename];
+
+  if (!base64Data) {
+    return new Response('Image Not Found', { status: 404 });
+  }
+
+  // 3. Use 'as string' to satisfy the fetch parameter type (URL | RequestInfo)
+  const response = await fetch(base64Data as string);
+  const blob = await response.blob();
+
+  return new Response(blob, {
+    headers: { 
+      'Content-Type': blob.type,
+      'Cache-Control': 'public, max-age=3600' // Optional: cache for 1 hour
+    }
+  });
+}

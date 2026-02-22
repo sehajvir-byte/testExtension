@@ -43,3 +43,16 @@ export async function extractImagesFromPdf(pdfBuffer: ArrayBuffer | Uint8Array):
     throw error;
   }
 }
+async function saveImagesToBuffer(images: string[]) {
+    const storageObject: Record<string, string> = {};
+    
+    images.forEach((base64, index) => {
+      const filename = `image${index}.png`;
+      storageObject[filename] = base64;
+    });
+  
+    // Save to the "Buffer Zone"
+    await chrome.storage.local.set(storageObject);
+    
+    console.log("Images ready in buffer zone.");
+}
