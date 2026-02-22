@@ -84,17 +84,25 @@ export async function processSelectedFile(
     console.log("[Canvas Accessify] Rendered PDF blob:", htmlString);
 
     // 1. Store HTML to chrome.storage.local
-    chrome.storage.local.set({ tempHtmlData: htmlString, dyslexic: mode.dyslexia }, () => {
-      // 2. Get URL
-      const viewerUrl = chrome.runtime.getURL("viewer.html") +
-                        `?mode=${encodeURIComponent(mode.highContrast)}`;
-      // 3. Open Page
-      chrome.tabs.create({ url: viewerUrl });
-    });
+    chrome.storage.local.set(
+      { tempHtmlData: htmlString, dyslexic: mode.dyslexia },
+      () => {
+        // 2. Build viewer URL
+        const viewerUrl =
+          chrome.runtime.getURL("viewer.html") +
+          `?mode=${encodeURIComponent(mode.highContrast)}`;
+
+        // 3. Open viewer + notify popup
+        chrome.tabs.create({ url: viewerUrl }, () => {
+          chrome.runtime.sendMessage({ type: "PDF_LOADED" });
+        });
+      }
+    );
   } catch (err) {
     console.error("[Canvas Accessify] Pipeline error:", err);
   }
 }
+
 
 // ===============================
 //  STORAGE LISTENER (popup → background)
