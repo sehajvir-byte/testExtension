@@ -3,10 +3,13 @@ import { processSelectedFile } from "./background";
 import './App.css'
 import logo from '../icons/canvas-accessify-icon.png'
 
-type AccessibilityMode = 'high-contrast' | 'color-blind' | 'dyslexia' | 'adhd'
-
 function App() {
-  const [accessibilityMode, setAccessibilityMode] = useState<AccessibilityMode | 'none'>('none')
+  const [accessibilityModes, setAccessibilityModes] = useState({
+  adhd: false,
+  dyslexia: false,
+  colorBlind: false,
+  highContrast: false
+})
   const [token, setToken] = useState('')
   const [googleToken, setGoogleToken] = useState('')
   const [loadingFile, setLoadingFile] = useState<string | null>(null)
@@ -154,41 +157,43 @@ return (
 
           {/* ===== ACCESSIBILITY MODE BUTTON GRID ===== */}
           <div className="mode-grid">
+
             <button
-              className={`mode-btn ${accessibilityMode === 'adhd' ? 'active' : ''}`}
+              className={`mode-btn ${accessibilityModes.adhd ? 'active' : ''}`}
               onClick={() =>
-                setAccessibilityMode(accessibilityMode === 'adhd' ? 'none' : 'adhd')
+                setAccessibilityModes(prev => ({ ...prev, adhd: !prev.adhd }))
               }
             >
               ADHD
             </button>
 
             <button
-              className={`mode-btn ${accessibilityMode === 'dyslexia' ? 'active' : ''}`}
+              className={`mode-btn ${accessibilityModes.dyslexia ? 'active' : ''}`}
               onClick={() =>
-                setAccessibilityMode(accessibilityMode === 'dyslexia' ? 'none' : 'dyslexia')
+                setAccessibilityModes(prev => ({ ...prev, dyslexia: !prev.dyslexia }))
               }
             >
               Dyslexia
             </button>
 
             <button
-              className={`mode-btn ${accessibilityMode === 'color-blind' ? 'active' : ''}`}
+              className={`mode-btn ${accessibilityModes.colorBlind ? 'active' : ''}`}
               onClick={() =>
-                setAccessibilityMode(accessibilityMode === 'color-blind' ? 'none' : 'color-blind')
+                setAccessibilityModes(prev => ({ ...prev, colorBlind: !prev.colorBlind }))
               }
             >
               Color Blind
             </button>
 
             <button
-              className={`mode-btn ${accessibilityMode === 'high-contrast' ? 'active' : ''}`}
+              className={`mode-btn ${accessibilityModes.highContrast ? 'active' : ''}`}
               onClick={() =>
-                setAccessibilityMode(accessibilityMode === 'high-contrast' ? 'none' : 'high-contrast')
+                setAccessibilityModes(prev => ({ ...prev, highContrast: !prev.highContrast }))
               }
             >
               High Contrast
             </button>
+
           </div>
 
           {/* ===== FILE LIST ===== */}
@@ -199,7 +204,7 @@ return (
               <button
                 onClick={() => {
                   setLoadingFile(file.name)
-                  processSelectedFile(file, accessibilityMode)
+                  processSelectedFile(file, accessibilityModes)
                 }}
                 className="gold-button"
                 disabled={loadingFile === file.name}
@@ -208,8 +213,11 @@ return (
               </button>
             </div>
           ))}
+
         </div>
       )}
+
+
 
       {/* ===== LOCAL FILE UPLOAD ===== */}
       <div className="section">

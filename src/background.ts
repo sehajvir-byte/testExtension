@@ -69,7 +69,7 @@ async function fetchPdfBlob(downloadUrl: string): Promise<Blob> {
 // Main processing pipeline
 export async function processSelectedFile(
   file: { name: string; url: string },
-  mode: { contrast: boolean, dyslexic: boolean} 
+  mode: { adhd: boolean, dyslexia: boolean, colorBlind: boolean, highContrast: boolean } 
 ) {
   try {
     console.log("[Canvas Accessify] Starting pipeline for:", file);
@@ -80,14 +80,14 @@ export async function processSelectedFile(
     const originalPdf = await fetchPdfBlob(downloadUrl);
     console.log("[Canvas Accessify] Original PDF blob:", originalPdf);
 
-    const htmlString = await renderPdf(originalPdf, mode.contrast);
+    const htmlString = await renderPdf(originalPdf, mode.highContrast);
     console.log("[Canvas Accessify] Rendered PDF blob:", htmlString);
 
     // 1. Store HTML to chrome.storage.local
-    chrome.storage.local.set({ tempHtmlData: htmlString, dyslexic: mode.dyslexic }, () => {
+    chrome.storage.local.set({ tempHtmlData: htmlString, dyslexic: mode.dyslexia }, () => {
       // 2. Get URL
       const viewerUrl = chrome.runtime.getURL("viewer.html") +
-                        `?mode=${encodeURIComponent(mode.contrast)}`;
+                        `?mode=${encodeURIComponent(mode.highContrast)}`;
       // 3. Open Page
       chrome.tabs.create({ url: viewerUrl });
     });
@@ -104,7 +104,7 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 
   if (changes.selectedLink) {
     const file = changes.selectedLink.newValue as { name: string; url: string };
-    const mode = changes.selectedLink.newValue as { contrast: boolean; dyslexic: boolean };
+    const mode = changes.selectedLink.newValue as { adhd: boolean, dyslexia: boolean, colorBlind: boolean, highContrast: boolean};
 
     console.log("[Canvas Accessify] Detected new selectedLink:", file);
     console.log("[Canvas Accessify] Mode:", mode);
