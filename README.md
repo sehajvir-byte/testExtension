@@ -36,4 +36,4 @@ Standard Learning Management Systems (LMS) are often overwhelming.
 3.  Open Chrome and navigate to `chrome://extensions/`.
 4.  Enable **Developer Mode** and click **Load Unpacked**.
 5.  Select the `dist` folder.
-6.  Open any Canvas course at **uofa.instructure.com** and click the extension icon to begin!
+6.  Open any Canvas course at **uofa.instructure.com**, then refresh, and click the extension icon to begin!
