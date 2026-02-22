@@ -103,7 +103,6 @@ export async function processSelectedFile(
   }
 }
 
-
 // ===============================
 //  STORAGE LISTENER (popup → background)
 // ===============================
