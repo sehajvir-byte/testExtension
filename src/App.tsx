@@ -4,12 +4,15 @@ import './App.css'
 import logo from '../icons/canvas-accessify-icon.png'
 
 function App() {
+
+  // ===== ACCESSIBILITY MODES (multi-toggle) =====
   const [accessibilityModes, setAccessibilityModes] = useState({
-  adhd: false,
-  dyslexia: false,
-  colorBlind: false,
-  highContrast: false
-})
+    adhd: false,
+    dyslexia: false,
+    colorBlind: false,
+    highContrast: false
+  })
+
   const [token, setToken] = useState('')
   const [googleToken, setGoogleToken] = useState('')
   const [loadingFile, setLoadingFile] = useState<string | null>(null)
@@ -33,111 +36,115 @@ function App() {
   }, [files])
 
   // Load tokens on startup
- useEffect(() => {
-  chrome.storage.local.get(
-    ['canvasToken', 'googleToken'],
-    (result: { canvasToken?: string; googleToken?: string }) => {
+  useEffect(() => {
+    chrome.storage.local.get(
+      ['canvasToken', 'googleToken'],
+      (result: { canvasToken?: string; googleToken?: string }) => {
 
-      if (typeof result.canvasToken === 'string') {
-        setToken(result.canvasToken)
+        if (typeof result.canvasToken === 'string') {
+          setToken(result.canvasToken)
+        }
+
+        if (typeof result.googleToken === 'string') {
+          setGoogleToken(result.googleToken)
+        }
+
+        if (!result.canvasToken || !result.googleToken) {
+          setShowSettings(true)
+        } else {
+          setShowSettings(false)
+        }
       }
+    )
+  }, [])
 
-      if (typeof result.googleToken === 'string') {
-        setGoogleToken(result.googleToken)
-      }
-
-      if (!result.canvasToken || !result.googleToken) {
-        setShowSettings(true)
-      } else {
-        setShowSettings(false)
-      }
-    }
-  )
-}, [])
-
-
-const scanForFiles = () => {
-  setStatus('Scanning...')
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    const tab = tabs[0]
-    if (!tab?.id) return
-
-    chrome.tabs.sendMessage(tab.id, { type: 'SCAN_FILES' }, (response) => {
-      if (chrome.runtime.lastError) {
-        setStatus('Error: Refresh the Canvas page')
-      } else if (response?.files) {
-        setFiles(response.files)
-        setStatus(`Found ${response.files.length} files!`)
-      } else {
-        setStatus('No files found on this page.')
+  // Reset loading when viewer opens
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((msg) => {
+      if (msg.type === "PDF_LOADED") {
+        setLoadingFile(null)
       }
     })
-  })
-}
+  }, [])
 
-return (
-  <div className="app-container">
+  const scanForFiles = () => {
+    setStatus('Scanning...')
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0]
+      if (!tab?.id) return
 
-    {/* ===== HEADER ===== */}
-    <div className="header">
-      <img src={logo} className="app-logo" />
-      <h1 className="app-title">Canvas Accessify</h1>
-      <div className="gold-line" />
-    </div>
+      chrome.tabs.sendMessage(tab.id, { type: 'SCAN_FILES' }, (response) => {
+        if (chrome.runtime.lastError) {
+          setStatus('Error: Refresh the Canvas page')
+        } else if (response?.files) {
+          setFiles(response.files)
+          setStatus(`Found ${response.files.length} files!`)
+        } else {
+          setStatus('No files found on this page.')
+        }
+      })
+    })
+  }
 
-    {/* ===== TOKEN SECTION ===== */}
-    {showSettings ? (
-      <div className="section">
+  return (
+    <div className="app-container">
 
-        {/* Canvas API Token */}
-        <label className="token-label">Canvas API Token</label>
-        <input
-          type="password"
-          placeholder="Canvas API Token"
-          value={token}
-          onChange={(e) => {
-            const value = e.target.value
-            setToken(value)
-            chrome.storage.local.set({ canvasToken: value })
-          }}
-          className="token-input"
-        />
+      {/* ===== HEADER ===== */}
+      <div className="header">
+        <img src={logo} className="app-logo" />
+        <h1 className="app-title">Canvas Accessify</h1>
+        <div className="gold-line" />
+      </div>
 
-        {/* Google API Token */}
-        <label className="token-label">Google API Token</label>
-        <input
-          type="password"
-          placeholder="Google API Token"
-          value={googleToken}
-          onChange={(e) => {
-            const value = e.target.value
-            setGoogleToken(value)
-            chrome.storage.local.set({ googleToken: value })
-          }}
-          className="token-input"
-        />
+      {/* ===== TOKEN SECTION ===== */}
+      {showSettings ? (
+        <div className="section">
 
-        {(token || googleToken) && (
+          <label className="token-label">Canvas API Token</label>
+          <input
+            type="password"
+            placeholder="Canvas API Token"
+            value={token}
+            onChange={(e) => {
+              const value = e.target.value
+              setToken(value)
+              chrome.storage.local.set({ canvasToken: value })
+            }}
+            className="token-input"
+          />
+
+          <label className="token-label">Google API Token</label>
+          <input
+            type="password"
+            placeholder="Google API Token"
+            value={googleToken}
+            onChange={(e) => {
+              const value = e.target.value
+              setGoogleToken(value)
+              chrome.storage.local.set({ googleToken: value })
+            }}
+            className="token-input"
+          />
+
+          {(token || googleToken) && (
+            <button
+              onClick={() => setShowSettings(false)}
+              className="link-button"
+            >
+              Save and Hide
+            </button>
+          )}
+        </div>
+      ) : (
+        <div style={{ textAlign: 'right', marginBottom: '10px' }}>
           <button
-            onClick={() => setShowSettings(false)}
+            onClick={() => setShowSettings(true)}
             className="link-button"
           >
-            Save and Hide
+            Edit Tokens
           </button>
-        )}
-      </div>
-    ) : (
-      <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-        <button
-          onClick={() => setShowSettings(true)}
-          className="link-button"
-        >
-          Edit Tokens
-        </button>
-      </div>
-    )}
-
-
+        </div>
+      )}
 
       {/* ===== SCAN BUTTON ===== */}
       <button
@@ -160,36 +167,40 @@ return (
 
             <button
               className={`mode-btn ${accessibilityModes.adhd ? 'active' : ''}`}
-              onClick={() =>
+              onClick={() => {
                 setAccessibilityModes(prev => ({ ...prev, adhd: !prev.adhd }))
-              }
+                setLoadingFile(null)
+              }}
             >
               ADHD
             </button>
 
             <button
               className={`mode-btn ${accessibilityModes.dyslexia ? 'active' : ''}`}
-              onClick={() =>
+              onClick={() => {
                 setAccessibilityModes(prev => ({ ...prev, dyslexia: !prev.dyslexia }))
-              }
+                setLoadingFile(null)
+              }}
             >
               Dyslexia
             </button>
 
             <button
               className={`mode-btn ${accessibilityModes.colorBlind ? 'active' : ''}`}
-              onClick={() =>
+              onClick={() => {
                 setAccessibilityModes(prev => ({ ...prev, colorBlind: !prev.colorBlind }))
-              }
+                setLoadingFile(null)
+              }}
             >
               Color Blind
             </button>
 
             <button
               className={`mode-btn ${accessibilityModes.highContrast ? 'active' : ''}`}
-              onClick={() =>
+              onClick={() => {
                 setAccessibilityModes(prev => ({ ...prev, highContrast: !prev.highContrast }))
-              }
+                setLoadingFile(null)
+              }}
             >
               High Contrast
             </button>
@@ -203,6 +214,7 @@ return (
 
               <button
                 onClick={() => {
+                  setLoadingFile(null)
                   setLoadingFile(file.name)
                   processSelectedFile(file, accessibilityModes)
                 }}
@@ -216,8 +228,6 @@ return (
 
         </div>
       )}
-
-
 
       {/* ===== LOCAL FILE UPLOAD ===== */}
       <div className="section">
@@ -243,7 +253,6 @@ return (
         </p>
       </div>
 
-      {/* ===== STATUS ===== */}
       <p className="status-text">
         Status: {status}
       </p>
