@@ -6,11 +6,12 @@ import logo from '../icons/canvas-accessify-icon.png'
 type AccessibilityMode = 'high-contrast' | 'color-blind' | 'dyslexia' | 'adhd'
 
 function App() {
+  const [accessibilityMode, setAccessibilityMode] = useState<AccessibilityMode | 'none'>('none')
   const [token, setToken] = useState('')
   const [googleToken, setGoogleToken] = useState('')
+  const [loadingFile, setLoadingFile] = useState<string | null>(null)
   const [status, setStatus] = useState('Ready')
   const [files, setFiles] = useState<{ name: string; url: string }[]>([])
-  const [accessibilityMode, setAccessibilityMode] = useState<AccessibilityMode>('adhd')
   const [showSettings, setShowSettings] = useState(false)
 
   const addLocalFile = (file: File) => {
@@ -52,86 +53,86 @@ function App() {
 }, [])
 
 
-  const scanForFiles = () => {
-    setStatus('Scanning...')
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tab = tabs[0]
-      if (!tab?.id) return
+const scanForFiles = () => {
+  setStatus('Scanning...')
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tab = tabs[0]
+    if (!tab?.id) return
 
-      chrome.tabs.sendMessage(tab.id, { type: 'SCAN_FILES' }, (response) => {
-        if (chrome.runtime.lastError) {
-          setStatus('Error: Refresh the Canvas page')
-        } else if (response?.files) {
-          setFiles(response.files)
-          setStatus(`Found ${response.files.length} files!`)
-        } else {
-          setStatus('No files found on this page.')
-        }
-      })
+    chrome.tabs.sendMessage(tab.id, { type: 'SCAN_FILES' }, (response) => {
+      if (chrome.runtime.lastError) {
+        setStatus('Error: Refresh the Canvas page')
+      } else if (response?.files) {
+        setFiles(response.files)
+        setStatus(`Found ${response.files.length} files!`)
+      } else {
+        setStatus('No files found on this page.')
+      }
     })
-  }
+  })
+}
 
-  return (
-    <div className="app-container">
+return (
+  <div className="app-container">
 
-      {/* ===== HEADER ===== */}
-      <div className="header">
-        <img src={logo} className="app-logo" />
-        <h1 className="app-title">Canvas Accessify</h1>
-        <div className="gold-line" />
-      </div>
+    {/* ===== HEADER ===== */}
+    <div className="header">
+      <img src={logo} className="app-logo" />
+      <h1 className="app-title">Canvas Accessify</h1>
+      <div className="gold-line" />
+    </div>
 
-      {/* ===== TOKEN SECTION ===== */}
-      {showSettings ? (
-        <div className="section">
+    {/* ===== TOKEN SECTION ===== */}
+    {showSettings ? (
+      <div className="section">
 
-          {/* Canvas API Token */}
-          <label className="token-label">Canvas API Token</label>
-          <input
-            type="password"
-            placeholder="Canvas API Token"
-            value={token}
-            onChange={(e) => {
-              const value = e.target.value
-              setToken(value)
-              chrome.storage.local.set({ canvasToken: value })
-            }}
-            className="token-input"
-          />
+        {/* Canvas API Token */}
+        <label className="token-label">Canvas API Token</label>
+        <input
+          type="password"
+          placeholder="Canvas API Token"
+          value={token}
+          onChange={(e) => {
+            const value = e.target.value
+            setToken(value)
+            chrome.storage.local.set({ canvasToken: value })
+          }}
+          className="token-input"
+        />
 
-          {/* Google API Token */}
-          <label className="token-label">Google API Token</label>
-          <input
-            type="password"
-            placeholder="Google API Token"
-            value={googleToken}
-            onChange={(e) => {
-              const value = e.target.value
-              setGoogleToken(value)
-              chrome.storage.local.set({ googleToken: value })
-            }}
-            className="token-input"
-          />
+        {/* Google API Token */}
+        <label className="token-label">Google API Token</label>
+        <input
+          type="password"
+          placeholder="Google API Token"
+          value={googleToken}
+          onChange={(e) => {
+            const value = e.target.value
+            setGoogleToken(value)
+            chrome.storage.local.set({ googleToken: value })
+          }}
+          className="token-input"
+        />
 
-          {(token || googleToken) && (
-            <button
-              onClick={() => setShowSettings(false)}
-              className="link-button"
-            >
-              Save and Hide
-            </button>
-          )}
-        </div>
-      ) : (
-        <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+        {(token || googleToken) && (
           <button
-            onClick={() => setShowSettings(true)}
+            onClick={() => setShowSettings(false)}
             className="link-button"
           >
-            Edit Tokens
+            Save and Hide
           </button>
-        </div>
-      )}
+        )}
+      </div>
+    ) : (
+      <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+        <button
+          onClick={() => setShowSettings(true)}
+          className="link-button"
+        >
+          Edit Tokens
+        </button>
+      </div>
+    )}
 
 
 
@@ -147,29 +148,63 @@ function App() {
       {files.length > 0 && (
         <div className="section">
 
-          <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '6px' }}>
+          <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '8px' }}>
             PDF View Preference:
           </label>
 
-          <select
-            value={accessibilityMode}
-            onChange={(e) => setAccessibilityMode(e.target.value as AccessibilityMode)}
-            className="select-dropdown"
-          >
-            <option value="adhd">ADHD (Warm/Low Glare)</option>
-            <option value="high-contrast">High Contrast (Dark Mode)</option>
-            <option value="color-blind">Color Blind Assist</option>
-            <option value="dyslexia">Enhanced Spacing</option>
-          </select>
+          {/* ===== ACCESSIBILITY MODE BUTTON GRID ===== */}
+          <div className="mode-grid">
+            <button
+              className={`mode-btn ${accessibilityMode === 'adhd' ? 'active' : ''}`}
+              onClick={() =>
+                setAccessibilityMode(accessibilityMode === 'adhd' ? 'none' : 'adhd')
+              }
+            >
+              ADHD
+            </button>
 
+            <button
+              className={`mode-btn ${accessibilityMode === 'dyslexia' ? 'active' : ''}`}
+              onClick={() =>
+                setAccessibilityMode(accessibilityMode === 'dyslexia' ? 'none' : 'dyslexia')
+              }
+            >
+              Dyslexia
+            </button>
+
+            <button
+              className={`mode-btn ${accessibilityMode === 'color-blind' ? 'active' : ''}`}
+              onClick={() =>
+                setAccessibilityMode(accessibilityMode === 'color-blind' ? 'none' : 'color-blind')
+              }
+            >
+              Color Blind
+            </button>
+
+            <button
+              className={`mode-btn ${accessibilityMode === 'high-contrast' ? 'active' : ''}`}
+              onClick={() =>
+                setAccessibilityMode(accessibilityMode === 'high-contrast' ? 'none' : 'high-contrast')
+              }
+            >
+              High Contrast
+            </button>
+          </div>
+
+          {/* ===== FILE LIST ===== */}
           {files.map((file, index) => (
             <div key={index} className="file-item">
               <div className="file-name">{file.name}</div>
+
               <button
-                onClick={() => processSelectedFile(file, accessibilityMode)}
+                onClick={() => {
+                  setLoadingFile(file.name)
+                  processSelectedFile(file, accessibilityMode)
+                }}
                 className="gold-button"
+                disabled={loadingFile === file.name}
               >
-                View Accessible PDF
+                {loadingFile === file.name ? "Loading..." : "View Accessible PDF"}
               </button>
             </div>
           ))}
