@@ -3,7 +3,7 @@
 // Placeholder for your real PDF rendering pipeline.
 // For now, it just returns the original PDF blob unchanged.
 export async function renderPdfPlaceholder(inputPdf: Blob): Promise<Blob> {
-  console.log("[InclusiveCanvas] Placeholder renderer received PDF blob:", inputPdf);
+  console.log("[CanvasAccessibility] Placeholder renderer received PDF blob:", inputPdf);
   // replace this with a call to the backend
   return inputPdf;
 }
@@ -18,8 +18,8 @@ chrome.storage.local.get(['googleToken'], (result) => {
    API_KEY = String(result.googleToken)
 })
 
-export async function renderPdf(inputPdf: Blob, contrast: boolean): Promise<TrustedHTML> {
-  console.log("[InclusiveCanvas] Processing PDF for ADHD optimization...");
+export async function renderPdf(inputPdf: Blob, contrast: boolean, colourBlind: boolean): Promise<TrustedHTML> {
+  console.log("[CanvasAccessibility] Processing PDF for ADHD optimization...");
 
   try {
     // 1. Initialize Gemini Client
@@ -32,10 +32,15 @@ export async function renderPdf(inputPdf: Blob, contrast: boolean): Promise<Trus
 
     var bg_color : string = "#fdfbf7"
     var text_color : string = "#000000, #009E73, #332288, #882255, #117733"
-
+  
     if(contrast){
       bg_color = "#121212"
       text_color = "#1A85FF, #4fffd9ff, #FEFE62, #ffcca7ff, #1AFF1A"
+    }
+
+    if(colourBlind){
+      bg_color = "#f0ededff"
+      text_color = "#882255, #785EF0, #FFB000 #DC267F, #FE6100"
     }
 
     // 3. Define the ADHD-friendly System Prompt
@@ -131,7 +136,7 @@ export async function renderPdf(inputPdf: Blob, contrast: boolean): Promise<Trus
     ]);
 
     const adhdHtml = result.response.text();
-    console.log("[InclusiveCanvas] Generated HTML content.");
+    console.log("[CanvasAccessibility] Generated HTML content.");
 
     // Deprecated: We no longer output pdfs
     // 5. Convert the generated HTML string back to a PDF Blob

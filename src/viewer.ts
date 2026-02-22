@@ -16,6 +16,9 @@ const customCSS: string = `
     font-size: 20px;
     line-height: 2;
   }
+    strong{
+      text-color: #FFDE64;
+    }
 `;
 
 const fontCSS: string = `

@@ -80,7 +80,7 @@ export async function processSelectedFile(
     const originalPdf = await fetchPdfBlob(downloadUrl);
     console.log("[Canvas Accessify] Original PDF blob:", originalPdf);
 
-    const htmlString = await renderPdf(originalPdf, mode.highContrast);
+    const htmlString = await renderPdf(originalPdf, mode.highContrast, mode.colorBlind);
     console.log("[Canvas Accessify] Rendered PDF blob:", htmlString);
 
     // 1. Store HTML to chrome.storage.local
