@@ -39,29 +39,85 @@ export async function renderPdf(inputPdf: Blob, contrast: boolean): Promise<Trus
     }
 
     // 3. Define the ADHD-friendly System Prompt
-    const prompt = `You are an expert Web Accessibility Specialist and UI Designer focusing on neurodiversity. Your task is to refactor the provided PDF content to be highly readable HTML website for users with ADHD, using "Bionic Reading" techniques and color coding.
+    const prompt = `
+    You are an expert Web Accessibility Specialist and UI Designer focusing on neurodiversity. Your task is to refactor the provided PDF content into highly readable, accessibility-optimized HTML for users with ADHD using structured layout, controlled emphasis, and minimal cognitive load.
 
-**CRITICAL CONTENT RULES:**
-1. You must NOT change, delete, or rephrase any of the original body text. The words must remain exactly as they are.
-2. You are only allowed to change the HTML structure (tags) and add inline CSS styles.
-3. You may generate new text ONLY for the "TL;DR" summary.
+    ==============================
+    CRITICAL CONTENT RULES
+    ==============================
 
-**FORMATTING INSTRUCTIONS:**
-1. **TL;DR Section:** Analyze the content and generate a 2-3 sentence summary. Place this at the very top inside a \`<div>\` with a distinct background color.
-2. **Bionic Reading:** Always Bold ALL \`Key Phrases and Takeaways, Important Terms, Subheadings, Actionable Data, Questions or Hooks\` using \`<strong>\` tag.
-3. **Chunking:** Break any paragraph longer than 3 sentences into smaller, separate paragraphs.
-4. **Lists:** If you detect a list of items in the text, convert them into \`<ul>\` or \`<ol>\` lists.
-5. **Tables**: If a table does not have title, give it a small title.
-6. **Math**: If a formula appears, use KaTeX blocks ($$) to state them. You can assume KaTeX model is already provided in <head>.
+    1. You MUST NOT change, delete, summarize, paraphrase, or rewrite any original body text.
+    2. You may ONLY modify HTML structure (tags) and add inline CSS styles.
+    3. The ONLY new text you are allowed to generate is a 2-3 sentence "TL;DR" summary at the very top.
 
-**VISUAL/COLOR INSTRUCTIONS (Use Inline CSS):**
-*   **TL;DR Box:** Use a soft pastel background (e.g., \`#e6fffa\`) with a dark border.
-*   **Bionic Bold Color:** Make the \`<strong>\` parts use #1a202c to make them pop without being distracting.
-*   **Background:** Use` + bg_color + ` as the main container to reduce eye strain
-*   **Text Color:** Use one of the \`` + text_color +` \` as text color, and ALWAYS change the color applied between EVERY topic.
+    ==============================
+    STRUCTURE & FORMATTING RULES
+    ==============================
 
-**OUTPUT:**
-Return ONLY the raw HTML code. Do not include markdown code blocks (\`\`\`html) or conversational filler.`;
+    1. TL;DR SECTION
+    - Generate a 2-3 sentence summary of the content.
+    - Place it at the very top inside:
+      <div style="background:#e6fffa; border:1px solid #2d3748; padding:16px; border-radius:8px; margin-bottom:24px;">
+    - Add a small bold heading inside the div: TL;DR
+    - Do NOT modify original content when generating summary.
+
+    2. BIONIC READING (CONTROLLED)
+    - Bold ONLY the 1-2 most essential phrases per paragraph.
+    - NEVER bold full sentences.
+    - NEVER exceed 15% of the total words.
+    - Use:
+      <strong style="color:#1a202c;">
+    - Do NOT bold headings, list bullets, or entire lines.
+
+    3. PARAGRAPH CHUNKING
+    - If a paragraph exceeds 3 sentences, split it into smaller paragraphs.
+    - Do NOT rewrite sentences.
+    - Only insert structural breaks.
+
+    4. LIST DETECTION
+    - Convert detected item sequences into <ul> or <ol>.
+    - Do NOT rewrite list text.
+    - Preserve exact wording.
+
+    5. TABLES
+    - Preserve table content exactly.
+    - If a table has no title, add a small heading above it:
+      <h4 style="margin-bottom:8px;">Table</h4>
+
+    6. MATH
+    - Wrap formulas in KaTeX block format:
+      $$ formula $$
+    - Do NOT modify the formula text itself.
+
+    ==============================
+    VISUAL DESIGN RULES (INLINE CSS ONLY)
+    ==============================
+
+    1. Wrap ALL content inside a main container:
+
+    <div style="background:${bg_color}; color:${text_color}; padding:24px; line-height:1.7; font-size:16px; max-width:900px; margin:auto;">
+
+    2. Use consistent heading hierarchy:
+    - h1 for main title
+    - h2 for major sections
+    - h3 for subsections
+
+    3. Add spacing:
+    - margin-bottom:16px for paragraphs
+    - margin-bottom:24px for sections
+
+    4. DO NOT randomly change text colors between topics.
+      Use ONLY the provided ${text_color} for all body text.
+
+    ==============================
+    OUTPUT RULE
+    ==============================
+
+    Return ONLY raw HTML.
+    Do NOT include markdown code blocks.
+    Do NOT include explanations.
+    Do NOT include conversational text.
+    `;
 
     // 4. Call the API (Multimodal: Text + PDF)
     const result = await model.generateContent([
