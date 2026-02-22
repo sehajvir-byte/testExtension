@@ -112,7 +112,7 @@ export async function renderPdf(inputPdf: Blob, contrast: boolean, colourBlind: 
     - margin-bottom:24px for sections
 
     4. DO NOT randomly change text colors between topics.
-      Use ONLY the provided ${text_color} for all body text.
+      Use ONLY one of the provided colours: [${text_color}] for all body text.
 
     ==============================
     OUTPUT RULE
