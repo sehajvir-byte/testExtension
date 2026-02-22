@@ -16,7 +16,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const API_KEY = "AIzaSyD_PiyhAFmh52SgY6bTfqQknhVepV-k3rg"; // Securely manage this (e.g., process.env.API_KEY)
 
-export async function renderPdf(inputPdf: Blob): Promise<TrustedHTML> {
+export async function renderPdf(inputPdf: Blob, contrast: boolean): Promise<TrustedHTML> {
   console.log("[InclusiveCanvas] Processing PDF for ADHD optimization...");
 
   try {
@@ -27,6 +27,14 @@ export async function renderPdf(inputPdf: Blob): Promise<TrustedHTML> {
 
     // 2. Convert Blob to Base64 (Required for the API)
     const base64Data = await blobToBase64(inputPdf);
+
+    var bg_color : string = "#fdfbf7"
+    var text_color : string = "#000000, #009E73, #332288, #882255, #117733"
+
+    if(contrast){
+      bg_color = "#121212"
+      text_color = "#1A85FF, #4fffd9ff, #FEFE62, #ffcca7ff, #1AFF1A"
+    }
 
     // 3. Define the ADHD-friendly System Prompt
     const prompt = `You are an expert Web Accessibility Specialist and UI Designer focusing on neurodiversity. Your task is to refactor the provided PDF content to be highly readable HTML website for users with ADHD, using "Bionic Reading" techniques and color coding.
@@ -45,13 +53,14 @@ export async function renderPdf(inputPdf: Blob): Promise<TrustedHTML> {
 6. **Math**: If a formula appears, use KaTeX blocks ($$) to state them. You can assume KaTeX model is already provided in <head>.
 
 **VISUAL/COLOR INSTRUCTIONS (Use Inline CSS):**
-*   **Background:** Use #fdfbf7 as the main container to reduce eye strain
-*   **Text Color:** Use one of the \` #000000, #009E73, #332288, #882255, #117733\` as text color, and ALWAYS change the color applied between EVERY topic.
-*   **Bionic Bold Color:** Make the \`<strong>\` parts use #1a202c to make them pop without being distracting.
 *   **TL;DR Box:** Use a soft pastel background (e.g., \`#e6fffa\`) with a dark border.
+*   **Bionic Bold Color:** Make the \`<strong>\` parts use #1a202c to make them pop without being distracting.
+*   **Background:** Use` + bg_color + ` as the main container to reduce eye strain
+*   **Text Color:** Use one of the \`` + text_color +` \` as text color, and ALWAYS change the color applied between EVERY topic.
 
 **OUTPUT:**
 Return ONLY the raw HTML code. Do not include markdown code blocks (\`\`\`html) or conversational filler.`;
+
     // 4. Call the API (Multimodal: Text + PDF)
     const result = await model.generateContent([
       prompt,
