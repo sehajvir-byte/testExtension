@@ -13,8 +13,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // You will need a library to convert the resulting HTML back to PDF.
 // For client-side: 'jspdf' is common. For server-side: 'puppeteer' or 'html-pdf-node'.
 // This example assumes a helper function exists or you handle the HTML rendering.
-
-const API_KEY = "AIzaSyD_PiyhAFmh52SgY6bTfqQknhVepV-k3rg"; // Securely manage this (e.g., process.env.API_KEY)
+var API_KEY: string = "";
+chrome.storage.local.get(['googleToken'], (result) => {
+   API_KEY = String(result.googleToken)
+})
 
 export async function renderPdf(inputPdf: Blob, contrast: boolean): Promise<TrustedHTML> {
   console.log("[InclusiveCanvas] Processing PDF for ADHD optimization...");
